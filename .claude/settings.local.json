@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsx *)",
+      "Bash(npm ls *)",
+      "Bash(node -e \"new \\(require\\('@prisma/client'\\).PrismaClient\\)\\(\\)\")",
+      "Bash(node --input-type=module -e \"import { PrismaClient } from './src/generated/prisma/client.ts'; console.log\\(typeof PrismaClient\\)\")",
+      "Bash(rm -rf prisma/migrations prisma/dev.db)",
+      "Bash(npx prisma *)",
+      "Bash(node prisma/seed.cjs)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const m = require\\('@prisma/adapter-libsql'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const {createClient}=require\\('@libsql/client'\\); const c=createClient\\({url:'file:./prisma/dev.db'}\\); c.execute\\('SELECT count\\(*\\) FROM prompt_templates'\\).then\\(r=>console.log\\(r.rows\\)\\).catch\\(e=>console.error\\(e.message\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(npm uninstall *)",
+      "Bash(npm run *)",
+      "Bash(git *)"
+    ]
+  }
+}
