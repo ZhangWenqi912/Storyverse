@@ -1,0 +1,100 @@
+/* 3D骰子样式 */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.dice-3d {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dice-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  padding: 12px;
+}
+
+.dice-dot {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 30% 30%, #00d9d9, #4a9eff);
+  border-radius: 50%;
+  box-shadow:
+    0 2px 4px rgba(0, 217, 217, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 六个面的3D定位 */
+.dice-3d .face-1 { transform: rotateY(0deg) translateZ(40px); }
+.dice-3d .face-2 { transform: rotateY(90deg) translateZ(40px); }
+.dice-3d .face-3 { transform: rotateY(180deg) translateZ(40px); }
+.dice-3d .face-4 { transform: rotateY(-90deg) translateZ(40px); }
+.dice-3d .face-5 { transform: rotateX(90deg) translateZ(40px); }
+.dice-3d .face-6 { transform: rotateX(-90deg) translateZ(40px); }
+
+/* 3D容器增强效果 */
+.dice-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  transform-style: preserve-3d;
+}
+
+/* 骰子边缘高光效果 */
+.dice-face::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, transparent 50%);
+  border-radius: 13px 13px 0 0;
+  pointer-events: none;
+}
+
+/* 骰子阴影效果 */
+.dice-3d::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 10px;
+  right: 10px;
+  height: 20px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(8px);
+  transform: rotateX(90deg) translateZ(-40px);
+}
+
+.delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+/* 旋转时的模糊效果 */
+.dice-3d.rolling .dice-face {
+  filter: blur(1px);
+  opacity: 0.9;
+}
+
+.dice-3d.rolling .dice-dot {
+  filter: blur(0.5px);
+  opacity: 0.8;
+}

@@ -1,0 +1,123 @@
+// Storyverse 数据库设计
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 用户模型
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  image         String?
+  level         Int      @default(1) // 离谱等级
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // 关联关系
+  storyNodes    StoryNode[]
+  likes         Like[]
+  favorites     Favorite[]
+  achievements  UserAchievement[]
+
+  @@map("users")
+}
+
+// 故事节点 - 核心数据模型，采用邻接表存储树形结构
+model StoryNode {
+  id          String   @id @default(cuid())
+  content     String   // 故事内容（一句话）
+  parentId    String?  // 父节点ID，null表示根节点
+  authorId    String   // 作者ID
+  likesCount  Int      @default(0) // 点赞数
+  branchCount Int      @default(0) // 分支数（子节点数量）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 关联关系
+  parent      StoryNode?  @relation("StoryTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children    StoryNode[] @relation("StoryTree")
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes       Like[]
+  favorites   Favorite[]
+
+  @@index([parentId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("story_nodes")
+}
+
+// 点赞记录
+model Like {
+  id           String     @id @default(cuid())
+  userId       String
+  storyNodeId  String
+  createdAt    DateTime   @default(now())
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyNode    StoryNode  @relation(fields: [storyNodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyNodeId]) // 每个用户对每个节点只能点赞一次
+  @@index([storyNodeId])
+  @@map("likes")
+}
+
+// 收藏记录
+model Favorite {
+  id           String     @id @default(cuid())
+  userId       String
+  storyNodeId  String
+  createdAt    DateTime   @default(now())
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyNode    StoryNode  @relation(fields: [storyNodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyNodeId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+// 随机开头模板
+model PromptTemplate {
+  id          String   @id @default(cuid())
+  content     String   // 离谱开头内容
+  category    String   // 分类：搞笑、悬疑、科幻、奇幻、日常
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@map("prompt_templates")
+}
+
+// 成徽章定义
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String   // 成就名称
+  description String   // 成就描述
+  icon        String   // 成就图标
+  condition   String   // 达成条件描述
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+// 用户获得的成就
+model UserAchievement {
+  id             String      @id @default(cuid())
+  userId         String
+  achievementId  String
+  earnedAt       DateTime    @default(now())
+
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement    Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
